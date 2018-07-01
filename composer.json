@@ -16,7 +16,6 @@
         "laravel/tinker": "~1.0",
         "nesbot/carbon": "^1.22",
         "orangehill/iseed": "dev-master",
-        "pragmarx/tracker": "^3.2",
         "zizaco/entrust": "^1.9"
     },
     "require-dev": {

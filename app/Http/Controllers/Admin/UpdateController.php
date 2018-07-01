@@ -100,6 +100,35 @@ class UpdateController extends Controller
         $update=Update::find($id);
         $inputs=$request->all();
         $update->update($inputs);
+        $title = 'FireHound Update available';
+        $body = 'Build ' . $request['build_version'];
+        $device = $request['device_model'];
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $server_key = 'AAAAisGeVBo:APA91bFJrVs91Hmssv5VD3h8K8rRfNN_5u0vwjSbzx0eZn1sJEiR2FN4IlI9_ZfYzl0rNdgtqIkLb_zvmhsxYrGrO2TwgIUF78SrZh0QvG14yMtLNwY3_UHvxa5Dy0JcqxbNUAY8VGfO';
+        $data=array('title'=>$title,'body'=>$body);
+        $fields = array();
+        $fields['data'] = $data;
+        //to contents will be replaced by device ID
+        $fields['to'] = '/topics/' . $device;
+        //header with content_type api key
+        $headers = array(
+        'Content-Type:application/json',
+        'Authorization:key='.$server_key
+        );
+            
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        if ($result === FALSE) {
+        die('FCM Send Error: ' . curl_error($ch));
+        }
+        curl_close($ch);
         return response()->json([
             'msgtype'=>'success',
             'body'=>'Update updated successfully.'
