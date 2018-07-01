@@ -33,5 +33,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MarketplacesTableSeeder::class);
         $this->call(MonthlySalesTableSeeder::class);
         $this->call(StatesTableSeeder::class);
+        $this->call(DevicesTableSeeder::class);
+        $this->call(UpdatesTableSeeder::class);
     }
 }

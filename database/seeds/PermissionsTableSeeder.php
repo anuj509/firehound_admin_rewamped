@@ -627,6 +627,86 @@ class PermissionsTableSeeder extends Seeder
                 'updated_at' => '2018-01-30 14:58:16',
                 'deleted_at' => NULL,
             ),
+            61 => 
+            array (
+                'id' => 65,
+                'name' => 'createdevices',
+                'display_name' => 'Create Devices',
+                'description' => 'Create Devices',
+                'created_at' => '2018-07-01 07:07:01',
+                'updated_at' => '2018-07-01 07:07:01',
+                'deleted_at' => NULL,
+            ),
+            62 => 
+            array (
+                'id' => 66,
+                'name' => 'editdevices',
+                'display_name' => 'Edit Devices',
+                'description' => 'Edit Devices',
+                'created_at' => '2018-07-01 07:07:37',
+                'updated_at' => '2018-07-01 07:07:37',
+                'deleted_at' => NULL,
+            ),
+            63 => 
+            array (
+                'id' => 67,
+                'name' => 'deletedevices',
+                'display_name' => 'Delete Devices',
+                'description' => 'Delete Devices',
+                'created_at' => '2018-07-01 07:08:08',
+                'updated_at' => '2018-07-01 07:08:08',
+                'deleted_at' => NULL,
+            ),
+            64 => 
+            array (
+                'id' => 68,
+                'name' => 'viewdevices',
+                'display_name' => 'View Devices',
+                'description' => 'View Devices',
+                'created_at' => '2018-07-01 07:08:28',
+                'updated_at' => '2018-07-01 07:08:28',
+                'deleted_at' => NULL,
+            ),
+            65 => 
+            array (
+                'id' => 69,
+                'name' => 'createupdates',
+                'display_name' => 'Create Updates',
+                'description' => 'Create Updates',
+                'created_at' => '2018-07-01 07:15:42',
+                'updated_at' => '2018-07-01 07:15:42',
+                'deleted_at' => NULL,
+            ),
+            66 => 
+            array (
+                'id' => 70,
+                'name' => 'editupdates',
+                'display_name' => 'Edit Updates',
+                'description' => 'Edit Updates',
+                'created_at' => '2018-07-01 07:16:06',
+                'updated_at' => '2018-07-01 07:16:06',
+                'deleted_at' => NULL,
+            ),
+            67 => 
+            array (
+                'id' => 71,
+                'name' => 'deleteupdates',
+                'display_name' => 'Delete Updates',
+                'description' => 'Delete Updates',
+                'created_at' => '2018-07-01 07:16:45',
+                'updated_at' => '2018-07-01 07:16:45',
+                'deleted_at' => NULL,
+            ),
+            68 => 
+            array (
+                'id' => 72,
+                'name' => 'viewupdates',
+                'display_name' => 'View Updates',
+                'description' => 'View Updates',
+                'created_at' => '2018-07-01 07:17:12',
+                'updated_at' => '2018-07-01 07:17:48',
+                'deleted_at' => NULL,
+            ),
         ));
         
         
