@@ -359,7 +359,7 @@
         function perms(){
             return $.ajax({
             type: "GET",
-            url: "/admin/getperms",
+            url: "admin/getperms",
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: false,
