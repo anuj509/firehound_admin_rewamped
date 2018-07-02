@@ -29,6 +29,18 @@ class UpdatesTableSeeder extends Seeder
                 'updated_at' => '2018-07-01 10:33:31',
                 'deleted_at' => NULL,
             ),
+            1 => 
+            array (
+                'id' => 2,
+                'device_id' => 2,
+                'buildversion' => '',
+                'ziplink' => '',
+                'changelog' => '',
+                'xdathread' => '',
+                'created_at' => '2018-07-02 19:08:34',
+                'updated_at' => '2018-07-02 19:08:34',
+                'deleted_at' => NULL,
+            ),
         ));
         
         

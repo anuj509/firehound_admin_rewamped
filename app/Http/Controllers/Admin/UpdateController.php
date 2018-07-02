@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Update;
 use App\Device;
+use App\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Auth;
 
 class UpdateController extends Controller
 {
@@ -19,15 +21,45 @@ class UpdateController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        $updates=Update::all('id','device_id','buildversion','ziplink','changelog','xdathread')->sortByDesc("created_at");
-        foreach ($updates as $key => $update) {
-            $device=Device::where('id',$update->device_id)->first();
-            $updates[$key]['devicemodel']=$device['model'];
-            $updates[$key]['devicename']=$device['name'];
-            unset($updates[$key]['device_id']);
+    {   
+        $userId = Auth::User('admin')->id;
+        //print_r($userId);
+        if($userId==3){
+            $updates=Update::all('id','device_id','buildversion','ziplink','changelog','xdathread')->sortByDesc("created_at");
+            foreach ($updates as $key => $update) {
+                $device=Device::where('id',$update->device_id)->first();
+                $updates[$key]['devicemodel']=$device['model'];
+                $updates[$key]['devicename']=$device['name'];
+                if($device->admin_id!=0){
+                    $admin=Admin::find($device->admin_id);
+                    $updates[$key]['maintainer']=$admin->name;
+                }else{
+                    $updates[$key]['maintainer']="UnAssigned";
+                }
+                unset($updates[$key]['device_id']);
+            }
+            return response()->json($updates);
+        }else{
+            $devices=Device::where('admin_id',$userId)->get()->toArray();
+            $device_ids=array_column($devices,'id');
+            $updates=Update::whereIn('device_id',$device_ids)->get();
+            foreach ($updates as $key => $update) {
+                $device=Device::where('id',$update->device_id)->first();
+                $updates[$key]['devicemodel']=$device['model'];
+                $updates[$key]['devicename']=$device['name'];
+                if($device->admin_id!=0){
+                    $admin=Admin::find($device->admin_id);
+                    $updates[$key]['maintainer']=$admin->name;
+                }else{
+                    $updates[$key]['maintainer']="UnAssigned";
+                }
+                unset($updates[$key]['device_id']);
+                unset($updates[$key]['created_at']);
+                unset($updates[$key]['updated_at']);
+                unset($updates[$key]['deleted_at']);
+            }
+            return response()->json($updates);
         }
-        return response()->json($updates);
     }
 
     /**
@@ -143,6 +175,8 @@ class UpdateController extends Controller
      */
     public function destroy($id)
     {
+        $update=Update::find($id);
+        Device::destroy($update->device_id);
         Update::destroy($id);
         return response()->json([
             'msgtype'=>'success',

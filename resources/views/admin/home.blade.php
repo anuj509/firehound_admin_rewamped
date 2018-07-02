@@ -9,6 +9,6 @@ Dashboard
 @endsection
 @section('js')
 <script>
-    toastr['success']('Please Wait application is loading...!');
+    toastr['success']('Application Loading...!');
 </script>
 @stop

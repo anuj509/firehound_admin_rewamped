@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Firehound</title>
+    <title>FireHound</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{asset('css/font-awesome/font-awesome.min.css')}}">
     <!-- Bootstrap core CSS -->
@@ -854,7 +854,7 @@
                     headers = ['id','Name','Model','Maintainer'];
                     break;
                 case 'updates':
-                    headers = ['id','Build Version','ZipLink','ChangeLog','XDA Thread Link','Device Model','Device Name'];
+                    headers = ['id','Build Version','ZipLink','ChangeLog','XDA Thread Link','Device Model','Device Name','Maintainer'];
                     break;                                
                 case 'somecase':
                     headers = "Monday";
@@ -985,8 +985,13 @@
             }
         }
         function checkURL(url) {
-            url=url.toString();
-            return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+            // console.log(url);
+            if(url!=null){
+                url=url.toString();
+                return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+            }else{
+                return false;
+            }
         }
         function isHTML(str) {
           var a = document.createElement('div');
@@ -1016,7 +1021,7 @@
                     break;
                 case 'admins':
                     form ='<form method="post" action="/admin/admins/'+id+'/update" id="editModalForm" enctype="multipart/form-data">';
-                    form+='<div class="md-form"> <i class="fa fa-user prefix grey-text"></i> <input type="text" name="name" class="form-control" required> <label>Full name</label> </div> <div class="md-form"> <i class="fa fa-envelope prefix grey-text"></i> <input type="text" name="email" class="form-control" required> <label>Email</label> </div> <div class="md-form"> <i class="fa fa-lock prefix grey-text"></i> <input type="password" name="password" class="form-control" required> <label>Password</label> </div> <div class="md-form"> <i class="fa fa-lock prefix grey-text"></i> <input type="password" name="cnf-password" class="form-control" required> <label>Confirm password</label> </div><div class="md-form"><select class="mdb-select" name="device_id[]" multiple required><option selected disabled>-- select device --</option>'+options+'</select></div></div><button type="submit" id="formsubmit" style="display:none;">'; 
+                    form+='<div class="md-form"> <i class="fa fa-user prefix grey-text"></i> <input type="text" name="name" class="form-control" required> <label>Full name</label> </div> <div class="md-form"> <i class="fa fa-envelope prefix grey-text"></i> <input type="text" name="email" class="form-control" required> <label>Email</label> </div> <div class="md-form"> <i class="fa fa-lock prefix grey-text"></i> <input type="password" name="password" class="form-control" required> <label>Password</label> </div> <div class="md-form"> <i class="fa fa-lock prefix grey-text"></i> <input type="password" name="cnf-password" class="form-control" required> <label>Confirm password</label> </div><div class="md-form"><select class="mdb-select" name="device_id[]" multiple required>'+options+'</select></div></div><button type="submit" id="formsubmit" style="display:none;">'; 
                     form+='</form>';
                     break;
                 case 'permissions':
@@ -1390,7 +1395,7 @@
                     
                     break;
                 case 'admins':
-                    response='getdevices';
+                    response='devices';
                     break;
                 case 'permissions':
                     
@@ -1447,8 +1452,8 @@
             options='';
             editrowoptions=editRowOptions(module);
             $.when( $.ajax(module+'/'+id), $.ajax( "/admin/"+editrowoptions+"/" ) ).done(function( data, response ) {
-              //console.log(data[0]);
-              console.log(response[0]);
+              console.log(data[0]);
+              //console.log(response[0]);
               options+=makeOptions(response[0]);
               
               if(module=='guides'){

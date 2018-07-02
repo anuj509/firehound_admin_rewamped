@@ -101,6 +101,7 @@ class DeviceController extends Controller
     public function show($id)
     {
         $device=Device::where('id',$id)->get(['id','admin_id','name','model'])->first();
+        $device['device_id[]']=$id;
         return response()->json($device);
     }
 
@@ -113,6 +114,7 @@ class DeviceController extends Controller
     public function edit($id)
     {
         $device=Device::find($id);
+        $device['device_id[]']=$id;
         return response()->json($device);
     }
 

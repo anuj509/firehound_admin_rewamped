@@ -56,7 +56,7 @@
                     <div class="header pt-3 blue-gradient">
 
                         <div class="row d-flex justify-content-center">
-                            <h3 class="white-text mb-3 pt-3 font-weight-bold">Firehound:Admin</h3>
+                            <h3 class="white-text mb-3 pt-3 font-weight-bold">FireHound:Admin</h3>
                         </div>
 
                         <div class="white-text row mt-2 mb-3 d-flex justify-content-center">

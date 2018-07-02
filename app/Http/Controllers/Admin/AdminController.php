@@ -15,8 +15,6 @@ use App\Package;
 use App\Customer;
 use App\Device;
 use Carbon\Carbon;
-use Tracker;
-use App\TrackerAgent;
 use Illuminate\Support\Facades\DB;
 class AdminController extends Controller
 {
@@ -95,6 +93,13 @@ class AdminController extends Controller
             $admin->save();
             $roleuser->user_id=$admin->id;
             $roleuser->save();
+            $device_ids=$request->input('device_id');
+            if(count($device_ids)>0)
+            foreach ($device_ids as $key => $device_id) {
+                $device=Device::find($device_id);
+                $device->admin_id=$admin->id;
+                $device->save();
+            }
             return response()->json([
             'msgtype'=>'success',
             'body'=>'User created successfully.'
@@ -129,6 +134,10 @@ class AdminController extends Controller
     public function edit($id)
     {
         $admin=Admin::where('id',$id)->get(['id','name','email'])->first();
+        $devices=Device::where('admin_id',$admin->id)->get()->toArray();
+        if(count($devices)>0){
+            $admin['device_id[]']=array_column($devices,'id');
+        }
         $roleuser=RoleUser::where('user_id',$admin->id)->first();
         if(count($roleuser)>0){
         $role=Role::where('id',$roleuser->role_id)->first();
@@ -211,79 +220,82 @@ class AdminController extends Controller
     {
       $permissions=$this->getPermissions();
       //print_r($permissions);
-      $sidenav='<li><a href="/admin/home" class="collapsible-header waves-effect">DashBoard</a></li>';
-      if(in_array('viewadmins', $permissions) || in_array('viewroles', $permissions) || in_array('viewpermissions', $permissions)){
-        $sidenav.='<li><a class="collapsible-header waves-effect arrow-r"><i class="fa fa-table"></i> User Management<i class="fa fa-angle-down rotate-icon"></i></a> <div class="collapsible-body"> <ul>';
-      }
-      if(in_array('viewadmins', $permissions)){
-        $sidenav.='<li><a class="waves-effect" onclick="admins()"><i class="fa fa-users"></i> Users</a>
-                                </li>';
-      }                          
-      if(in_array('viewroles', $permissions)){
-        $sidenav.='<li><a class="waves-effect" onclick="roles()"><i class="fa fa-table"></i> Role</a>
-                                </li>';
-      }                          
-      if(in_array('viewpermissions', $permissions)){
-        $sidenav.='<li><a class="waves-effect" onclick="permissions()"><i class="fa fa-table"></i> Permissions</a></li>';
+      $sidenav='';
+    //   $sidenav='<li><a href="/admin/home" class="collapsible-header waves-effect">DashBoard</a></li>';
+    //   if(in_array('viewadmins', $permissions) || in_array('viewroles', $permissions) || in_array('viewpermissions', $permissions)){
+    //     $sidenav.='<li><a class="collapsible-header waves-effect arrow-r"><i class="fa fa-table"></i> User Management<i class="fa fa-angle-down rotate-icon"></i></a> <div class="collapsible-body"> <ul>';
+    //   }
+    //   if(in_array('viewadmins', $permissions)){
+    //     $sidenav.='<li><a class="waves-effect" onclick="admins()"><i class="fa fa-users"></i> Maintainers</a>
+    //                             </li>';
+    //   }                          
+    //   if(in_array('viewroles', $permissions)){
+    //     $sidenav.='<li><a class="waves-effect" onclick="roles()"><i class="fa fa-table"></i> Role</a>
+    //                             </li>';
+    //   }                          
+    //   if(in_array('viewpermissions', $permissions)){
+    //     $sidenav.='<li><a class="waves-effect" onclick="permissions()"><i class="fa fa-table"></i> Permissions</a></li>';
+    //     }
+    //   if(in_array('viewadmins', $permissions) || in_array('viewroles', $permissions) || in_array('viewpermissions', $permissions)){
+    //     $sidenav.='</ul>
+    //                     </div>
+    //                 </li>';
+    //   }                            
+        if(in_array('viewadmins', $permissions)){
+            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="admins()"><i class="fa fa-users"></i> Maintainers</a></li>';
         }
-      if(in_array('viewadmins', $permissions) || in_array('viewroles', $permissions) || in_array('viewpermissions', $permissions)){
-        $sidenav.='</ul>
-                        </div>
-                    </li>';
-      }                            
-        
-        if(in_array('viewcustomers', $permissions)){
-            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="customers()"><i class="fa fa-users"></i> Customers</a></li>';
-        }
-        if(in_array('viewsliders', $permissions)){
-            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="sliders()"><i class="fa fa-film"></i> Sliders</a></li>';
-        }
-        if(in_array('viewguides', $permissions)){
-            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="guides()"><i class="fa fa-book"></i> Guides</a></li>';
-        }
-        if(in_array('viewtypes', $permissions)){
-            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="types()"><i class="fa fa-tag"></i> Types</a></li>';
-        }
-        if(in_array('viewpackages', $permissions)){
-            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="packages()"><i class="fa fa-list"></i> Packages</a></li>';
-        }
-        if(in_array('viewblogs', $permissions)){
-            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="blogs()"><i class="fa fa-list"></i> Blogs</a></li>';
-        }
-        if(in_array('viewtickets', $permissions)){
-            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="tickets()"><i class="fa fa-list"></i> Tickets</a></li>';
-        }
-        if(in_array('viewservices', $permissions)){
-            $sidenav.='<li><a class="collapsible-header waves-effect" onclick="services()"><i class="fa fa-list"></i> Services</a></li>';
-        }
-        if(in_array('viewstates', $permissions) || in_array('viewmarketplaces', $permissions) || in_array('viewmonthlysales', $permissions) || in_array('viewfulfillments', $permissions) || in_array('viewcategoriesdeals', $permissions)){
-        $sidenav.='<li><a class="collapsible-header waves-effect arrow-r"><i class="fa fa-table"></i> Configuration<i class="fa fa-angle-down rotate-icon"></i></a> <div class="collapsible-body"> <ul>';
-        }
-        if(in_array('viewstates', $permissions)){
-        $sidenav.='<li><a class="waves-effect" onclick="states()"><i class="fa fa-flag"></i> States</a>
-                                </li>';
-        }                          
-        if(in_array('viewmarketplaces', $permissions)){
-        $sidenav.='<li><a class="waves-effect" onclick="marketplaces()"><i class="fa fa-table"></i> MarketPlaces</a>
-                                </li>';
-        }
-        if(in_array('viewmonthlysales', $permissions)){
-        $sidenav.='<li><a class="waves-effect" onclick="monthlysales()"><i class="fa fa-table"></i> MonthlySales</a>
-                                </li>';
-        }
-        if(in_array('viewfulfillments', $permissions)){
-        $sidenav.='<li><a class="waves-effect" onclick="fulfillments()"><i class="fa fa-table"></i> FulFillment</a>
-                                </li>';
-        }
-        if(in_array('viewcategoriesdeals', $permissions)){
-        $sidenav.='<li><a class="waves-effect" onclick="categoriesdeals()"><i class="fa fa-table"></i> CategoriesDeals</a>
-                                </li>';
-        }
-        if(in_array('viewstates', $permissions) || in_array('viewmarketplaces', $permissions) || in_array('viewmonthlysales', $permissions) || in_array('viewfulfillments', $permissions) || in_array('viewcategoriesdeals', $permissions)){
-        $sidenav.='</ul>
-                        </div>
-                    </li>';
-        }
+        // if(in_array('viewcustomers', $permissions)){
+        //     $sidenav.='<li><a class="collapsible-header waves-effect" onclick="customers()"><i class="fa fa-users"></i> Customers</a></li>';
+        // }
+        // if(in_array('viewsliders', $permissions)){
+        //     $sidenav.='<li><a class="collapsible-header waves-effect" onclick="sliders()"><i class="fa fa-film"></i> Sliders</a></li>';
+        // }
+        // if(in_array('viewguides', $permissions)){
+        //     $sidenav.='<li><a class="collapsible-header waves-effect" onclick="guides()"><i class="fa fa-book"></i> Guides</a></li>';
+        // }
+        // if(in_array('viewtypes', $permissions)){
+        //     $sidenav.='<li><a class="collapsible-header waves-effect" onclick="types()"><i class="fa fa-tag"></i> Types</a></li>';
+        // }
+        // if(in_array('viewpackages', $permissions)){
+        //     $sidenav.='<li><a class="collapsible-header waves-effect" onclick="packages()"><i class="fa fa-list"></i> Packages</a></li>';
+        // }
+        // if(in_array('viewblogs', $permissions)){
+        //     $sidenav.='<li><a class="collapsible-header waves-effect" onclick="blogs()"><i class="fa fa-list"></i> Blogs</a></li>';
+        // }
+        // if(in_array('viewtickets', $permissions)){
+        //     $sidenav.='<li><a class="collapsible-header waves-effect" onclick="tickets()"><i class="fa fa-list"></i> Tickets</a></li>';
+        // }
+        // if(in_array('viewservices', $permissions)){
+        //     $sidenav.='<li><a class="collapsible-header waves-effect" onclick="services()"><i class="fa fa-list"></i> Services</a></li>';
+        // }
+        // if(in_array('viewstates', $permissions) || in_array('viewmarketplaces', $permissions) || in_array('viewmonthlysales', $permissions) || in_array('viewfulfillments', $permissions) || in_array('viewcategoriesdeals', $permissions)){
+        // $sidenav.='<li><a class="collapsible-header waves-effect arrow-r"><i class="fa fa-table"></i> Configuration<i class="fa fa-angle-down rotate-icon"></i></a> <div class="collapsible-body"> <ul>';
+        // }
+        // if(in_array('viewstates', $permissions)){
+        // $sidenav.='<li><a class="waves-effect" onclick="states()"><i class="fa fa-flag"></i> States</a>
+        //                         </li>';
+        // }                          
+        // if(in_array('viewmarketplaces', $permissions)){
+        // $sidenav.='<li><a class="waves-effect" onclick="marketplaces()"><i class="fa fa-table"></i> MarketPlaces</a>
+        //                         </li>';
+        // }
+        // if(in_array('viewmonthlysales', $permissions)){
+        // $sidenav.='<li><a class="waves-effect" onclick="monthlysales()"><i class="fa fa-table"></i> MonthlySales</a>
+        //                         </li>';
+        // }
+        // if(in_array('viewfulfillments', $permissions)){
+        // $sidenav.='<li><a class="waves-effect" onclick="fulfillments()"><i class="fa fa-table"></i> FulFillment</a>
+        //                         </li>';
+        // }
+        // if(in_array('viewcategoriesdeals', $permissions)){
+        // $sidenav.='<li><a class="waves-effect" onclick="categoriesdeals()"><i class="fa fa-table"></i> CategoriesDeals</a>
+        //                         </li>';
+        // }
+        // if(in_array('viewstates', $permissions) || in_array('viewmarketplaces', $permissions) || in_array('viewmonthlysales', $permissions) || in_array('viewfulfillments', $permissions) || in_array('viewcategoriesdeals', $permissions)){
+        // $sidenav.='</ul>
+        //                 </div>
+        //             </li>';
+        // }
         if(in_array('viewdevices', $permissions)){
             $sidenav.='<li><a class="collapsible-header waves-effect" onclick="devices()"><i class="fa fa-list"></i> Devices</a></li>';
         }
@@ -305,7 +317,7 @@ class AdminController extends Controller
             $customerpercent=0;
         }
         $packages=Package::count();   
-        $usersOnline = Tracker::onlineUsers(60*1);
+        //$usersOnline = Tracker::onlineUsers(60*1);
         $cards='<section class="mt-lg-5">
 
                 <!--Grid row-->
@@ -418,7 +430,7 @@ class AdminController extends Controller
                                 <i class="fa fa-bar-chart red accent-2"></i>
                                 <div class="data">
                                     <p>RealTime Customers</p>
-                                    <h4 class="font-bold dark-grey-text">'.count($usersOnline).'</h4>
+                                    <h4 class="font-bold dark-grey-text">'.count(array(1,2)).'</h4>
                                 </div>
                             </div>
                             <!--/.Card Data-->
@@ -445,7 +457,7 @@ class AdminController extends Controller
             </section>';      
        //$trackerAgents=TrackerAgent::all()->pluck(`browser`,`browser_version`)->toArray();
        //SELECT `browser`,`browser_version`,COUNT(`browser`) as 'visits' FROM `tracker_agents` GROUP BY `browser`
-       $trackerAgents=DB::table('tracker_agents')->select('browser','browser_version',DB::raw('count(\'browser\') as visits'))->groupBy('browser')->get()->toArray();    
+       //$trackerAgents=DB::table('tracker_agents')->select('browser','browser_version',DB::raw('count(\'browser\') as visits'))->groupBy('browser')->get()->toArray();    
        // echo '<pre>';
        // print_r($trackerAgents);
        // echo '</pre>';
@@ -454,7 +466,7 @@ class AdminController extends Controller
        // foreach ($trackerAgents as $key => $value) {
        //     echo $value->browser.' '.$value->browser_version.' '.$value->visits.'<br>';
        // }
-       $usersOnline = Tracker::onlineUsers();
+       //$usersOnline = Tracker::onlineUsers();
         // foreach ($usersOnline as $key => $useronline) {
         // echo $useronline['user']['fullname'].'<br>';    
         // }
