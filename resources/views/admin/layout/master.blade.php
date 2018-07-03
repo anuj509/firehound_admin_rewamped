@@ -1020,7 +1020,7 @@
                     form+='</form>' ;
                     break;
                 case 'admins':
-                    form ='<form method="post" action="/admin/admins/'+id+'/update" id="editModalForm" enctype="multipart/form-data">';
+                    form ='<form method="post" action="/updates/admin/admins/'+id+'/update" id="editModalForm" enctype="multipart/form-data">';
                     form+='<div class="md-form"> <i class="fa fa-user prefix grey-text"></i> <input type="text" name="name" class="form-control" required> <label>Full name</label> </div> <div class="md-form"> <i class="fa fa-envelope prefix grey-text"></i> <input type="text" name="email" class="form-control" required> <label>Email</label> </div> <div class="md-form"> <i class="fa fa-lock prefix grey-text"></i> <input type="password" name="password" class="form-control" required> <label>Password</label> </div> <div class="md-form"> <i class="fa fa-lock prefix grey-text"></i> <input type="password" name="cnf-password" class="form-control" required> <label>Confirm password</label> </div><div class="md-form"><select class="mdb-select" name="device_id[]" multiple required>'+options+'</select></div></div><button type="submit" id="formsubmit" style="display:none;">'; 
                     form+='</form>';
                     break;
@@ -1090,12 +1090,12 @@
                     form+='</form>' ;
                     break;
                 case 'devices':
-                    form ='<form method="post" action="/admin/devices/'+id+'/update" id="editModalForm" enctype="multipart/form-data">';
+                    form ='<form method="post" action="/updates/admin/devices/'+id+'/update" id="editModalForm" enctype="multipart/form-data">';
                     form+='<div class="md-form"> <i class="fa fa-flag prefix grey-text"></i> <input type="text" class="form-control" name="name" required> <label>Device Name</label> </div><div class="md-form">  <i class="fa fa-flag prefix grey-text"></i><input type="text" class="form-control" name="model" required><label>Model</label> </div><button type="submit" id="formsubmit" style="display:none;">';
                     form+='</form>' ;
                     break;
                 case 'updates':
-                    form ='<form method="post" action="/admin/updates/'+id+'/update" id="editModalForm" enctype="multipart/form-data">';
+                    form ='<form method="post" action="/updates/admin/updates/'+id+'/update" id="editModalForm" enctype="multipart/form-data">';
                     form+='<div class="md-form">  <i class="fa fa-flag prefix grey-text"></i><input type="text" class="form-control" name="buildversion" required><label>Build Version</label> </div><div class="md-form">  <i class="fa fa-flag prefix grey-text"></i><input type="text" class="form-control" name="ziplink" required><label>Zip Link</label> </div><div class="md-form"> <i class="fa fa-pencil prefix"></i><textarea type="text" name="changelog" class="md-textarea"></textarea><label>Change Log</label> </div><div class="md-form">  <i class="fa fa-flag prefix grey-text"></i><input type="text" class="form-control" name="xdathread" required><label>XDA Thread Link</label> </div><button type="submit" id="formsubmit" style="display:none;">';
                     form+='</form>' ;
                     break;                             
@@ -1521,7 +1521,7 @@
                     break;
                 case 'admins':
                     options='';
-                    select=$.get('/admin/getdevices/',function(response){
+                    select=$.get('/updates/admin/getdevices/',function(response){
                         options+=makeOptions(response);
                         $('.mdb-select').append(options);
                         $('.mdb-select').material_select();
