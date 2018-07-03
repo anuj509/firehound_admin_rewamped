@@ -1451,7 +1451,7 @@
         function editRow(module,id){
             options='';
             editrowoptions=editRowOptions(module);
-            $.when( $.ajax(module+'/'+id), $.ajax( "/admin/"+editrowoptions+"/" ) ).done(function( data, response ) {
+            $.when( $.ajax(module+'/'+id), $.ajax( "/updates/admin/"+editrowoptions+"/" ) ).done(function( data, response ) {
               console.log(data[0]);
               //console.log(response[0]);
               options+=makeOptions(response[0]);
