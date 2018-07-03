@@ -33,7 +33,7 @@ class AdminController extends Controller
         $admins=Admin::all('id','name','email')->sortByDesc("created_at");
         foreach ($admins as $key => $admin) {
             $roleuser=RoleUser::where('user_id',$admin->id)->first();
-            if(count($roleuser)>0){
+            if(count($roleuser->toArray())>0){
             $role=Role::where('id',$roleuser->role_id)->first();
                 if($role->id!='4'){
                     unset($admins[$key]);
