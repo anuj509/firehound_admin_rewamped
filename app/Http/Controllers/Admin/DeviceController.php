@@ -11,14 +11,30 @@ class DeviceController extends Controller
 {
     public function __construct(Request $request)
     {
-        $this->middleware('auth:admin');
-        $this->middleware('clearance',['except'=>['getDevices']]);
+        $this->middleware('auth:admin',['except'=>['appIndex']]);
+        $this->middleware('clearance',['except'=>['getDevices','appIndex']]);
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function appIndex()
+    {
+        $devices=Device::all('id','admin_id','name','model')->sortByDesc("created_at");
+        foreach ($devices as $key => $device) {
+            if($devices[$key]['admin_id']!=0){
+                $admin=Admin::where('id',$devices[$key]['admin_id'])->first();
+                $devices[$key]['maintainer']=$admin['name'];
+            }else{
+                $devices[$key]['maintainer']="UnAssigned";
+            }
+            unset($devices[$key]['admin_id']);
+        }
+        return response()->json($devices);
+    }
+
     public function index()
     {
         $devices=Device::all('id','admin_id','name','model')->sortByDesc("created_at");

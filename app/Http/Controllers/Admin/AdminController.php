@@ -20,15 +20,51 @@ class AdminController extends Controller
 {
     public function __construct(Request $request)
     {
-        $this->middleware('auth:admin');
-        $this->middleware('clearance',['except'=>['getSupport','dashboard','getPermissions']]);
+        $this->middleware('auth:admin',['except'=>['getMaintainer']]);
+        $this->middleware('clearance',['except'=>['getSupport','dashboard','getPermissions','getMaintainer']]);
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    
+    public function getMaintainer(Request $request)
+    {
+        if(app('App\Http\Controllers\Admin\UpdateController')->checkToken($request->input('token'))){
+            $admins=Admin::all('id','name','email')->sortByDesc("created_at");
+            foreach ($admins as $key => $admin) {
+                $roleuser=RoleUser::where('user_id',$admin->id)->first();
+                if(count($roleuser->toArray())>0){
+                $role=Role::where('id',$roleuser->role_id)->first();
+                    if($role->id!='4'){
+                        unset($admins[$key]);
+                    }else{
+                        $devices=Device::where('admin_id',$admin->id)->get()->toArray();
+                        if(count($devices)>0){
+                            $admins[$key]['devices']=implode(",",array_column($devices,'name'));
+                        }else{
+                            $admins[$key]['devices']='No Devices';
+                        }
+                        $admins[$key]['role_id']=$role->id;
+                        $admins[$key]['rolename']=$role->display_name;
+                    }
+                }else{
+                $admins[$key]['role_id']='-1';
+                $admins[$key]['rolename']='Unassigned';    
+                }
+            }
+            $data=array();
+            foreach ($admins as $key => $value) {
+                array_push($data,$value);
+            }
+            return response()->json($data);
+        }else{
+            return response()->json(['error'=>'no data']);
+        }
+    }
+    
+     public function index()
     {
         $admins=Admin::all('id','name','email')->sortByDesc("created_at");
         foreach ($admins as $key => $admin) {
@@ -60,6 +96,9 @@ class AdminController extends Controller
         
         return response()->json($admins);
     }
+
+
+
 
     /**
      * Show the form for creating a new resource.

@@ -13,13 +13,37 @@ class UpdateController extends Controller
 {
     public function __construct(Request $request)
     {
-        $this->middleware(['auth:admin','clearance']);
+        $this->middleware('auth:admin',['except'=>['getBuild']]);
+        $this->middleware('clearance',['except'=>['getBuild']]);
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function checkToken($token)
+    {
+        if(count(Admin::where('apitoken',$token)->first())>0){
+            return true;
+        }
+        return false;
+    }
+
+    public function getBuild(Request $request)
+    {
+        if($this->checkToken($request->input('token'))){
+            $devicename=$request->input('devicename');
+            //print_r($devicename);
+            $device=Device::where('name',$devicename)->first();
+            //print_r($device);    
+            $update=Update::where('device_id',$device->id)->get(['buildversion','ziplink','changelog','xdathread'])->first();
+            return response()->json($update);
+        }
+        return response()->json(['error'=>'no data']);
+    }
+
+
     public function index()
     {   
         $userId = Auth::User('admin')->id;

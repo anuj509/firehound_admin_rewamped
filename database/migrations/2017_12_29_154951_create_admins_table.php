@@ -18,6 +18,7 @@ class CreateAdminsTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->rememberToken();
+            $table->string('apitoken')->default('none');
             $table->timestamps();
             $table->softDeletes();
         });

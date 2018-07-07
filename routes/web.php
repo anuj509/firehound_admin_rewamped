@@ -55,6 +55,9 @@ Route::post('/companydetails','CustomerController@companydetails');
 
 Route::group(['prefix' => 'admin'], function () { 
   Route::post('/login', 'AdminAuth\LoginController@login');
+  Route::post('/login/api', 'AdminAuth\LoginController@loginApi');
+  Route::post('/getbuild/api','Admin\UpdateController@getBuild');
+  Route::post('/getmaintainers/api','Admin\AdminController@getMaintainer');
   Route::get('/login', 'AdminAuth\LoginController@showLoginForm')->name('login');
   Route::post('/logout', 'AdminAuth\LoginController@logout')->name('logout');
   Route::get('/home','Admin\AdminController@dashboard')->name('home');
@@ -144,6 +147,7 @@ Route::group(['prefix' => 'admin'], function () {
   Route::post('/categoriesdeals/{id}/update','Admin\CategoriesdealController@update');
   Route::get('/categoriesdeals/{id}/destroy','Admin\CategoriesdealController@destroy');
   Route::post('/categoriesdeals','Admin\CategoriesdealController@store')->name('categoriesdeals.save');
+  Route::get('/getalldevices/app','Admin\DeviceController@appIndex')->name('devices.getalldevices');
   Route::get('/getdevices','Admin\DeviceController@getDevices')->name('devices.getdevices');
   Route::get('/devices','Admin\DeviceController@index')->name('devices.index');
   Route::get('/devices/{id}','Admin\DeviceController@edit');
