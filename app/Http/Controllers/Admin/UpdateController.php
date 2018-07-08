@@ -49,12 +49,17 @@ class UpdateController extends Controller
         $userId = Auth::User('admin')->id;
         //print_r($userId);
         if($userId==3){
-            $updates=Update::all('id','device_id','buildversion','ziplink','changelog','xdathread')->sortByDesc("created_at");
+            $updates=Update::whereNull('deleted_at')->get(['id','device_id','buildversion','ziplink','changelog','xdathread']);
             foreach ($updates as $key => $update) {
-                $device=Device::where('id',$update->device_id)->first();
-                $updates[$key]['devicemodel']=$device['model'];
+            	$device=Device::find($update->device_id);
+            	if($device==NULL){
+            		unset($updates[$key]);
+            		continue;
+            	}
+            	$updates[$key]['devicemodel']=$device['model'];
                 $updates[$key]['devicename']=$device['name'];
                 if($device->admin_id!=0){
+                	//echo $device->admin_id;
                     $admin=Admin::find($device->admin_id);
                     $updates[$key]['maintainer']=$admin->name;
                 }else{
