@@ -24,7 +24,7 @@ class UpdateController extends Controller
 
     public function checkToken($token)
     {
-        if(count(Admin::where('apitoken',$token)->first())>0){
+        if(count(Admin::where('apitoken',$token)->first()->toArray())>0){
             return true;
         }
         return false;
