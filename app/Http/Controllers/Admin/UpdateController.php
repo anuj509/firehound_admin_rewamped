@@ -154,12 +154,13 @@ class UpdateController extends Controller
     public function update(Request $request, $id)
     {
         $update=Update::find($id);
+        $dev=Device::findOrFail($update->device_id);
         $inputs=$request->all();
         $update->update($inputs);
         //update api call start
         $title = 'FireHound Update available';
-        $body = 'Build ' . $request['build_version'];
-        $device = $request['device_model'];
+        $body = 'Build ' . $request['buildversion'];
+        $device = $dev->name;
         $url = 'https://fcm.googleapis.com/fcm/send';
         $server_key = 'AAAAisGeVBo:APA91bFJrVs91Hmssv5VD3h8K8rRfNN_5u0vwjSbzx0eZn1sJEiR2FN4IlI9_ZfYzl0rNdgtqIkLb_zvmhsxYrGrO2TwgIUF78SrZh0QvG14yMtLNwY3_UHvxa5Dy0JcqxbNUAY8VGfO';
         $data=array('title'=>$title,'body'=>$body);
